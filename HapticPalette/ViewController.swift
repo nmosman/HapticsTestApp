@@ -144,6 +144,9 @@ class ViewController: UIViewController {
                 // Indicate that the next time the app requires a haptic, the app doesn't need to call engine.start().
                 self.engineNeedsStart = false
                 
+                // Recreate the continuous player.
+                self.createContinuousHapticPlayer()
+                
             } catch {
                 print("Failed to start the engine")
             }
