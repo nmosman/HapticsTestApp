@@ -8,13 +8,14 @@ The view controller implementation for the Haptic Palette app.
 import UIKit
 
 import CoreHaptics
-
+import CoreMotion
 class ViewController: UIViewController {
     
     // Touch Palettes:
     //@IBOutlet weak var transientPalette: UIView?
     //@IBOutlet weak var continuousPalette: UIView?
     
+    private var motion =  CMMotionManager()
     // Views to represent 2D sliders.
     private var transientPalette: UIView!
     private var continuousPalette: UIView!
@@ -160,6 +161,35 @@ class ViewController: UIViewController {
         }
     }
     
+    func startAccelerometers(){
+        if self.motion.isAccelerometerAvailable{
+            
+            self.motion.accelerometerUpdateInterval = 1.0/60.0
+            self.motion.startAccelerometerUpdates(to: OperationQueue.current!){(data, error) in
+                print(data as Any)
+                if let trueData = data {
+                    
+                    self.view.reloadInputViews()
+                    let x = trueData.acceleration.x
+                    let y = trueData.acceleration.y
+                    let z = trueData.acceleration.z
+                    
+                }
+                
+                
+            }
+                
+            
+        }
+    
+    }
+    
+    extension Double{
+        func rounded(toPlaces places:Int) -> Double {
+            let divisor = pow(10.0, Double(places))
+            return (self * divisor).rounded()/divisor
+        }
+    }
     /// - Tag: CreateContinuousPattern
     func createContinuousHapticPlayer() {
         // Create an intensity parameter:
@@ -208,10 +238,10 @@ class ViewController: UIViewController {
         transientPalette = UIView(frame: transientFrame)
         continuousPalette = UIView(frame: continuousFrame)
         
-        formatPalette(transientPalette)
+        //formatPalette(transientPalette)
         formatPalette(continuousPalette)
         
-        self.view.addSubview(transientPalette)
+        //self.view.addSubview(transientPalette)
         self.view.addSubview(continuousPalette)
     }
     
@@ -233,10 +263,10 @@ class ViewController: UIViewController {
         transientTouchView = UIView(frame: frame)
         continuousTouchView = UIView(frame: frame)
         
-        formatTouchView(transientTouchView)
+       // formatTouchView(transientTouchView)
         formatTouchView(continuousTouchView)
         
-        transientPalette.addSubview(transientTouchView)
+        //transientPalette.addSubview(transientTouchView)
         continuousPalette.addSubview(continuousTouchView)
     }
     
@@ -267,9 +297,9 @@ class ViewController: UIViewController {
         continuousTitleLabel = UILabel(frame: continuousFrame)
         continuousTitleLabel.textAlignment = .center
         continuousTitleLabel.font = titleFont
-        continuousTitleLabel.text = "Continuous"
+        continuousTitleLabel.text = "2D Axis"
         
-        self.view.addSubview(transientTitleLabel)
+        //self.view.addSubview(transientTitleLabel)
         self.view.addSubview(continuousTitleLabel)
     }
     
@@ -290,7 +320,7 @@ class ViewController: UIViewController {
         
         transientValueLabel = UILabel(frame: transientFrame)
         transientValueLabel.textAlignment = .center
-        updateText(label: transientValueLabel, sharpness: 0.5, intensity: 0.5)
+        //updateText(label: transientValueLabel, sharpness: 0.5, intensity: 0.5)
         transientValueLabel.font = monospacedDigitsFont
         
         continuousValueLabel = UILabel(frame: continuousFrame)
@@ -603,5 +633,6 @@ class ViewController: UIViewController {
     private func updateText(label: UILabel, sharpness: Float, intensity: Float) {
         label.text = String(format: "Sharpness %.2f, Intensity %.2f", sharpness, intensity)
     }
+
     
 }
